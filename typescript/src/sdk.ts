@@ -16,7 +16,7 @@ export class WheelXSDK {
   private timeout: number;
 
   constructor(config: SDKConfig = {}) {
-    this.baseUrl = config.baseUrl || 'https://dev.wheelx.fi';
+    this.baseUrl = config.baseUrl || 'https://api.wheelx.fi';
     this.timeout = config.timeout || 30000;
   }
 

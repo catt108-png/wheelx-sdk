@@ -7,7 +7,7 @@ The `/v1/quote` endpoint provides token swap and bridge quotes with detailed tra
 ## Endpoint
 
 ```
-POST https://wheelx.fi/v1/quote
+POST https://api.wheelx.fi/v1/quote
 ```
 
 ## Request

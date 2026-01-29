@@ -108,7 +108,7 @@ class QuoteResponse:
 class WheelXSDK:
     """WheelX SDK for quote API and transaction execution"""
 
-    def __init__(self, base_url: str = "https://wheelx.fi"):
+    def __init__(self, base_url: str = "https://api.wheelx.fi"):
         self.base_url = base_url
         self.session = requests.Session()
 
