@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
-import { Tx, TransactionConfig, TransactionResult, TransactionError } from './types';
+import { Tx, TransactionConfig, TransactionResult } from './types';
+import { TransactionError } from './errors';
 
 /**
  * Transaction executor for WheelX SDK

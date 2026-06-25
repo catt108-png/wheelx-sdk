@@ -3,10 +3,8 @@ import {
   QuoteResponse,
   OrderResponse,
   SDKConfig,
-  APIError,
-  NetworkError,
-  ValidationError,
 } from './types';
+import { APIError, NetworkError, ValidationError } from './errors';
 
 /**
  * WheelX SDK for interacting with the quote API

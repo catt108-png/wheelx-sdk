@@ -8,6 +8,7 @@ import (
 	"io"
 	"math/big"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -30,20 +31,20 @@ type QuoteRequest struct {
 
 // Tx represents transaction data
 type Tx struct {
-	To                   string `json:"to"`
-	Value                int    `json:"value"`
-	Data                 string `json:"data"`
-	ChainId              *int   `json:"chainId,omitempty"`
-	Gas                  *int   `json:"gas,omitempty"`
-	MaxFeePerGas         *int   `json:"maxFeePerGas,omitempty"`
-	MaxPriorityFeePerGas *int   `json:"maxPriorityFeePerGas,omitempty"`
+	To                   string  `json:"to"`
+	Value                string  `json:"value"`
+	Data                 string  `json:"data"`
+	ChainId              *int    `json:"chainId,omitempty"`
+	Gas                  *string `json:"gas,omitempty"`
+	MaxFeePerGas         *string `json:"maxFeePerGas,omitempty"`
+	MaxPriorityFeePerGas *string `json:"maxPriorityFeePerGas,omitempty"`
 }
 
 // ApproveAction represents approval transaction data
 type ApproveAction struct {
 	Token   string `json:"token"`
 	Spender string `json:"spender"`
-	Amount  int    `json:"amount"`
+	Amount  string `json:"amount"`
 }
 
 // PriceImpactFormatted represents price impact breakdown
@@ -234,12 +235,24 @@ func (e *TransactionExecutor) BuildTransaction(ctx context.Context, txData Tx, f
 	data := common.FromHex(txData.Data)
 	to := common.HexToAddress(txData.To)
 
+	// Parse Value from string to big.Int
+	value := new(big.Int)
+	if txData.Value != "" {
+		value.SetString(txData.Value, 10)
+	}
+
+	// Parse Gas from string
+	var gasLimit uint64
+	if txData.Gas != nil && *txData.Gas != "" {
+		gasLimit, _ = strconv.ParseUint(*txData.Gas, 10, 64)
+	}
+
 	// Create transaction
 	tx := types.NewTx(&types.LegacyTx{
 		Nonce:    nonce,
 		To:       &to,
-		Value:    big.NewInt(int64(txData.Value)),
-		Gas:      uint64(*txData.Gas),
+		Value:    value,
+		Gas:      gasLimit,
 		GasPrice: gasPrice,
 		Data:     data,
 	})
@@ -280,14 +293,24 @@ func (e *TransactionExecutor) BuildEIP1559Transaction(ctx context.Context, txDat
 	to := common.HexToAddress(txData.To)
 
 	// Create EIP-1559 transaction
+	// Parse Value and Gas from string
+	eipValue := new(big.Int)
+	if txData.Value != "" {
+		eipValue.SetString(txData.Value, 10)
+	}
+	var eipGas uint64
+	if txData.Gas != nil && *txData.Gas != "" {
+		eipGas, _ = strconv.ParseUint(*txData.Gas, 10, 64)
+	}
+
 	tx := types.NewTx(&types.DynamicFeeTx{
 		ChainID:   chainID,
 		Nonce:     nonce,
 		GasTipCap: gasTipCap,
 		GasFeeCap: gasFeeCap,
-		Gas:       uint64(*txData.Gas),
+		Gas:       eipGas,
 		To:        &to,
-		Value:     big.NewInt(int64(txData.Value)),
+		Value:     eipValue,
 		Data:      data,
 	})
 
@@ -378,7 +401,7 @@ func main() {
 	if quote.Approve != nil {
 		fmt.Printf("Approval needed for token: %s\n", quote.Approve.Token)
 		fmt.Printf("Spender: %s\n", quote.Approve.Spender)
-		fmt.Printf("Amount: %d\n", quote.Approve.Amount)
+		fmt.Printf("Amount: %s\n", quote.Approve.Amount)
 	}
 
 	// Example transaction execution (requires Ethereum client and private key)

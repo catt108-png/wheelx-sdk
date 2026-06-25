@@ -2,6 +2,8 @@
  * Type definitions for WheelX SDK
  */
 
+import type { TransactionReceipt } from 'ethers';
+
 export interface QuoteRequest {
   from_chain: number;
   to_chain: number;
@@ -100,5 +102,5 @@ export interface TransactionConfig {
 
 export interface TransactionResult {
   hash: string;
-  wait: () => Promise<ethers.TransactionReceipt>;
+  wait: () => Promise<TransactionReceipt | null>;
 }

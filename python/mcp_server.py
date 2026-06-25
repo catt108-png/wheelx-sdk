@@ -21,10 +21,7 @@ from src.wheelx_sdk.wheelx_sdk import (
 )
 
 # Initialize FastMCP server
-mcp = FastMCP(
-    "WheelX MCP Server",
-    description="WheelX DeFi swap and bridge service for cross-chain token transfers"
-)
+mcp = FastMCP("WheelX MCP Server")
 
 # Initialize SDK
 sdk = WheelXSDK()

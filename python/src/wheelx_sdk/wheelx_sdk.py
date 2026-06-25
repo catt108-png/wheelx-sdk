@@ -5,7 +5,7 @@ WheelX Python SDK for quote API and transaction execution
 import json
 import time
 from typing import Dict, Optional, Any
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import requests
 
 
@@ -84,6 +84,13 @@ class OrderResponse:
     fill_timestamp: Optional[str]
     status: str
     points: str
+    routes: list[str] = field(default_factory=list)
+    bridge_order_id: Optional[str] = None
+    deposit_address: Optional[str] = None
+    to_platform_id: Optional[int] = None
+    order_value: Optional[str] = None
+    reward_type: Optional[str] = None
+    reward_value: Optional[str] = None
 
 
 @dataclass
@@ -96,7 +103,7 @@ class QuoteResponse:
     approve: Optional[ApproveAction]
     slippage: int
     min_receive: str
-    estimated_time: int
+    estimated_time: float
     recipient: str
     router_type: str
     price_impact: PriceImpactFormatted
@@ -257,7 +264,14 @@ class WheelXSDK:
             fill_block=data.get("fill_block"),
             fill_timestamp=data.get("fill_timestamp"),
             status=data.get("status"),
-            points=data.get("points", "0")
+            points=data.get("points", "0"),
+            routes=data.get("routes", []),
+            bridge_order_id=data.get("bridge_order_id"),
+            deposit_address=data.get("deposit_address"),
+            to_platform_id=data.get("to_platform_id"),
+            order_value=data.get("order_value"),
+            reward_type=data.get("reward_type"),
+            reward_value=data.get("reward_value"),
         )
 
 
