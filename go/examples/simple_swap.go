@@ -38,7 +38,7 @@ func main() {
 	fmt.Printf("Fee: %s USDT\n", quote.Fee)
 	fmt.Printf("Min Receive: %s USDT\n", quote.MinReceive)
 	fmt.Printf("Slippage: %.2f%%\n", float64(quote.Slippage)/100)
-	fmt.Printf("Estimated Time: %d seconds\n", quote.EstimatedTime)
+	fmt.Printf("Estimated Time: %.1f seconds\n", quote.EstimatedTime)
 	fmt.Printf("Points Earned: %s\n", quote.Points)
 
 	// Check if approval is needed

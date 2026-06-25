@@ -616,9 +616,31 @@ reward_value: Optional[str] = None
 
 ---
 
-### Bug #2 — QuoteResponse 缺字段（跨三个 SDK）
+### Bug #2 — QuoteResponse 缺字段（跨三个 SDK） ✅ 已修复
 
-未修复（范围大，涉及 Python/TypeScript/Go 三个 QuoteResponse 类型），留给开发团队统一处理。
+**影响范围**: Python SDK / TypeScript SDK / Go SDK
+
+修复涉及三个 SDK 统一补充以下字段：
+
+**Python** (`src/wheelx_sdk/wheelx_sdk.py`):
+- 新增 `RouteInfo` dataclass（`name`, `logo`）
+- 新增 `QuoteItem` dataclass（`request_id`, `router`, `amount_out`, `tx`, `routes`, `gas_fee`）
+- `QuoteResponse` 补充 6 个字段：`quotes`, `routes`, `deposit_address`, `gas_fee`, `bridge_order_id`, `quote_message`
+- `get_quote()` 方法新增 `quotes[]` 和 `routes` 解析逻辑
+
+**TypeScript** (`src/types.ts`):
+- 新增 `RouteInfo` 和 `QuoteItem` 接口
+- `QuoteResponse` 补充 6 个字段
+- 同步修复 `OrderResponse` 缺字段（Bug #8）和 `Tx.value`/`gas` 类型（Bug #1 的 TS 侧）
+- 同步修复 `ApproveAction.amount` 类型 `number` → `string`
+
+**Go** (`wheelx/wheelx_sdk.go`):
+- 新增 `RouteInfo` 和 `QuoteItem` 结构体
+- `QuoteResponse` 补充 6 个字段
+- `EstimatedTime` 类型 `int` → `float64`
+- Example 中 `%d` → `%.1f`
+
+测试: Python SDK 返回 4 个路由器的 quotes + routes ✅ / TypeScript tsc 0 errors ✅
 
 ---
 

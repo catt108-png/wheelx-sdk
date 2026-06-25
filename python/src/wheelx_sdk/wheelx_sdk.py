@@ -94,6 +94,24 @@ class OrderResponse:
 
 
 @dataclass
+class RouteInfo:
+    """Route information (router name + logo)"""
+    name: str
+    logo: str
+
+
+@dataclass
+class QuoteItem:
+    """Individual router quote within quotes[] array"""
+    request_id: str
+    router: str
+    amount_out: str
+    tx: Tx
+    routes: list["RouteInfo"]
+    gas_fee: Optional[str] = None
+
+
+@dataclass
 class QuoteResponse:
     """Quote response data"""
     request_id: str
@@ -110,6 +128,12 @@ class QuoteResponse:
     router: str
     created_at: str
     points: str
+    quotes: list[QuoteItem] = field(default_factory=list)
+    routes: list[RouteInfo] = field(default_factory=list)
+    deposit_address: Optional[str] = None
+    gas_fee: Optional[str] = None
+    bridge_order_id: Optional[str] = None
+    quote_message: Optional[str] = None
 
 
 class WheelXSDK:
@@ -182,6 +206,34 @@ class WheelXSDK:
             dst_gas_fee=price_impact_data.get("dst_gas_fee", "0")
         )
 
+        # Parse multi-router quotes array
+        quotes_list = []
+        for q in data.get("quotes", []):
+            qt = q.get("tx", {})
+            q_tx = Tx(
+                to=qt.get("to"),
+                value=qt.get("value", 0),
+                data=qt.get("data"),
+                chainId=qt.get("chainId"),
+                gas=qt.get("gas"),
+                maxFeePerGas=qt.get("maxFeePerGas"),
+                maxPriorityFeePerGas=qt.get("maxPriorityFeePerGas"),
+            )
+            q_routes = [RouteInfo(name=r.get("name", ""), logo=r.get("logo", ""))
+                        for r in q.get("routes", [])]
+            quotes_list.append(QuoteItem(
+                request_id=q.get("request_id", ""),
+                router=q.get("router", ""),
+                amount_out=q.get("amount_out", ""),
+                tx=q_tx,
+                routes=q_routes,
+                gas_fee=q.get("gas_fee"),
+            ))
+
+        # Parse top-level routes
+        routes_list = [RouteInfo(name=r.get("name", ""), logo=r.get("logo", ""))
+                       for r in data.get("routes", [])]
+
         return QuoteResponse(
             request_id=data.get("request_id"),
             amount_out=data.get("amount_out"),
@@ -196,7 +248,13 @@ class WheelXSDK:
             price_impact=price_impact,
             router=data.get("router", "wheelx"),
             created_at=data.get("created_at"),
-            points=data.get("points", "0")
+            points=data.get("points", "0"),
+            quotes=quotes_list,
+            routes=routes_list,
+            deposit_address=data.get("deposit_address"),
+            gas_fee=data.get("gas_fee"),
+            bridge_order_id=data.get("bridge_order_id"),
+            quote_message=data.get("quote_message"),
         )
 
     def get_order_status(self, request_id: str) -> OrderResponse:

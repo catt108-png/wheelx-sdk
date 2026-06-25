@@ -54,22 +54,44 @@ type PriceImpactFormatted struct {
 	DstGasFee string `json:"dst_gas_fee"`
 }
 
+// RouteInfo represents route information (router name + logo)
+type RouteInfo struct {
+	Name string `json:"name"`
+	Logo string `json:"logo"`
+}
+
+// QuoteItem represents an individual router quote within quotes[] array
+type QuoteItem struct {
+	RequestId string      `json:"request_id"`
+	Router    string      `json:"router"`
+	AmountOut string      `json:"amount_out"`
+	Tx        Tx          `json:"tx"`
+	Routes    []RouteInfo `json:"routes"`
+	GasFee    *string     `json:"gas_fee,omitempty"`
+}
+
 // QuoteResponse represents the quote response
 type QuoteResponse struct {
-	RequestId     string               `json:"request_id"`
-	AmountOut     string               `json:"amount_out"`
-	Fee           string               `json:"fee"`
-	Tx            Tx                   `json:"tx"`
-	Approve       *ApproveAction       `json:"approve,omitempty"`
-	Slippage      int                  `json:"slippage"`
-	MinReceive    string               `json:"min_receive"`
-	EstimatedTime int                  `json:"estimated_time"`
-	Recipient     string               `json:"recipient"`
-	RouterType    string               `json:"router_type"`
-	PriceImpact   PriceImpactFormatted `json:"price_impact"`
-	Router        string               `json:"router"`
-	CreatedAt     string               `json:"created_at"`
-	Points        string               `json:"points"`
+	RequestId      string               `json:"request_id"`
+	AmountOut      string               `json:"amount_out"`
+	Fee            string               `json:"fee"`
+	Tx             Tx                   `json:"tx"`
+	Approve        *ApproveAction        `json:"approve,omitempty"`
+	Slippage       int                  `json:"slippage"`
+	MinReceive     string               `json:"min_receive"`
+	EstimatedTime  float64              `json:"estimated_time"`
+	Recipient      string               `json:"recipient"`
+	RouterType     string               `json:"router_type"`
+	PriceImpact    PriceImpactFormatted `json:"price_impact"`
+	Router         string               `json:"router"`
+	CreatedAt      string               `json:"created_at"`
+	Points         string               `json:"points"`
+	Quotes         []QuoteItem          `json:"quotes"`
+	Routes         []RouteInfo          `json:"routes"`
+	DepositAddress *string              `json:"deposit_address,omitempty"`
+	GasFee         *string              `json:"gas_fee,omitempty"`
+	BridgeOrderId  *string              `json:"bridge_order_id,omitempty"`
+	QuoteMessage   *string              `json:"quote_message,omitempty"`
 }
 
 // TokenInfo represents token information

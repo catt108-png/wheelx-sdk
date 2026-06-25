@@ -17,24 +17,38 @@ export interface QuoteRequest {
 
 export interface Tx {
   to: string;
-  value: number;
+  value: string;
   data: string;
   chainId?: number;
-  gas?: number;
-  maxFeePerGas?: number;
-  maxPriorityFeePerGas?: number;
+  gas?: string | null;
+  maxFeePerGas?: string | null;
+  maxPriorityFeePerGas?: string | null;
 }
 
 export interface ApproveAction {
   token: string;
   spender: string;
-  amount: number;
+  amount: string;
 }
 
 export interface PriceImpactFormatted {
   bridge_fee: string;
   swap_fee: string;
   dst_gas_fee: string;
+}
+
+export interface RouteInfo {
+  name: string;
+  logo: string;
+}
+
+export interface QuoteItem {
+  request_id: string;
+  router: string;
+  amount_out: string;
+  tx: Tx;
+  routes: RouteInfo[];
+  gas_fee?: string | null;
 }
 
 export interface QuoteResponse {
@@ -52,6 +66,12 @@ export interface QuoteResponse {
   router: string;
   created_at: string;
   points: string;
+  quotes: QuoteItem[];
+  routes: RouteInfo[];
+  deposit_address?: string | null;
+  gas_fee?: string | null;
+  bridge_order_id?: string | null;
+  quote_message?: string | null;
 }
 
 export interface OrderResponse {
@@ -74,6 +94,13 @@ export interface OrderResponse {
   fill_timestamp?: string | null;
   status: OrderStatus;
   points: string;
+  routes: string[];
+  bridge_order_id?: string | null;
+  deposit_address?: string | null;
+  to_platform_id?: number | null;
+  order_value?: string | null;
+  reward_type?: string | null;
+  reward_value?: string | null;
 }
 
 export interface TokenInfo {
